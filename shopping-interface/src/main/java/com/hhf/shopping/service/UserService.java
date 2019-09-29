@@ -1,5 +1,6 @@
 package com.hhf.shopping.service;
 
+import com.hhf.shopping.bean.UserAddress;
 import com.hhf.shopping.bean.UserInfo;
 
 import java.util.List;
@@ -10,6 +11,9 @@ import java.util.List;
 public interface UserService {
 
     List<UserInfo> findAll();
+
+    //根据用户id查询用户地址列表
+    public List<UserAddress> getUserAddressList(String userId);
 
 
 }
