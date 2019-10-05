@@ -45,12 +45,6 @@ public class ManageController {
         manageService.saveAttrInfo(baseAttrInfo);
     }
 
-//    //修改和回显
-//    @RequestMapping("getAttrValueList")
-//    public List<BaseAttrValue> getAttrValueList(String attrId){
-//       return manageService.getAttrValueList(attrId);
-//    }
-
     @RequestMapping("getAttrValueList")
     public List<BaseAttrValue> getAttrValueList(String attrId){
         //通过attrId查询平台属性
@@ -58,4 +52,10 @@ public class ManageController {
         //再通过返回平台属性中的平台属性值
         return baseAttrInfo.getAttrValueList();
     }
+
+    @RequestMapping("baseSaleAttrList")
+    public List<BaseSaleAttr>baseSaleAttrList(){
+        return manageService.getBaseSaleAttrList();
+    }
+
 }

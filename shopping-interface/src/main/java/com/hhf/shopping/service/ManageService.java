@@ -40,4 +40,35 @@ public interface ManageService {
      *平台属性id查询平台属性对象
      */
     BaseAttrInfo getAttrInfo(String attrId);
+
+    /**
+     * 根据三级分类属性获取spu
+     * @return
+     */
+    List<SpuInfo> getSpuList(SpuInfo spuInfo);
+
+    /**
+     *
+     * 查询基本销售属性表
+     */
+    List<BaseSaleAttr> getBaseSaleAttrList();
+
+
+    void saveSpuInfo(SpuInfo spuInfo);
+
+    /**
+     * 保存spu的图片
+     */
+    List<SpuImage> getSpuImageList(SpuImage spuImage);
+
+    /**
+     * 根据id获取销售属性
+     */
+    List<SpuSaleAttr> getSpuSaleAttrList(String spuId);
+
+    /**
+     * 保存商品属性spu管理的商品信息管理sku名称到商品规格描述的数据
+     * @param skuInfo
+     */
+    void saveSkuInfo(SkuInfo skuInfo);
 }
