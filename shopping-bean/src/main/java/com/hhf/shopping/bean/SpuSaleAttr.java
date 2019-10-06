@@ -8,6 +8,7 @@ import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.List;
 
+//平台属性
 @Data
 public class SpuSaleAttr implements Serializable {
 

@@ -71,4 +71,24 @@ public interface ManageService {
      * @param skuInfo
      */
     void saveSkuInfo(SkuInfo skuInfo);
+
+    /**
+     *根据sku的id去查询skuinfo
+     */
+    SkuInfo getSkuInfo(String skuId);
+
+    /**
+     *根据sku的id去查询skuimage图片列表
+     */
+    List<SkuImage> getSkuImageBySkuId(String skuId);
+
+    /**
+     *根据sku的id和spu的id去查询销售属性
+     */
+    List<SpuSaleAttr> getSpuSaleAttrListCheckBySku(SkuInfo skuInfo);
+
+    /**
+     *根据spuid去查询销售属性值id，实现前台详情页的销售属性值的跳转
+     */
+    List<SkuSaleAttrValue> getSkuSaleAttrValueListBySpu(String spuId);
 }

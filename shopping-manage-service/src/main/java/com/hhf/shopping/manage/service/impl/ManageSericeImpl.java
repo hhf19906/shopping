@@ -207,4 +207,44 @@ public class ManageSericeImpl implements ManageService {
         }
 
     }
+
+    @Override
+    public SkuInfo getSkuInfo(String skuId) {
+        SkuInfo skuInfo = skuInfoMapper.selectByPrimaryKey(skuId);
+        SkuImage skuImage = new SkuImage();
+        skuImage.setSkuId(skuId);
+        List<SkuImage> select = skuImageMapper.select(skuImage);
+        skuInfo.setSkuImageList(select);
+
+        return skuInfo;
+    }
+
+    //V
+    @Override
+    public List<SkuImage> getSkuImageBySkuId(String skuId) {
+        SkuImage skuImage = new SkuImage();
+        skuImage.setSkuId(skuId);
+        List<SkuImage> select = skuImageMapper.select(skuImage);
+        return select;
+    }
+
+    @Override
+    public List<SpuSaleAttr> getSpuSaleAttrListCheckBySku(SkuInfo skuInfo) {
+
+        return spuSaleAttrMapper.SpuSaleAttrListCheckBySku(skuInfo.getId(),skuInfo.getSpuId());
+    }
+
+    @Override
+    public List<SkuSaleAttrValue> getSkuSaleAttrValueListBySpu(String spuId) {
+        // 根据spuId 查询数据
+        return   skuSaleAttrValueMapper.selectSkuSaleAttrValueListBySpu(spuId);
+
+    }
+
+//    @Override
+//    public List<SkuSaleAttrValue> getSkuSaleAttrValueListBySpu(String spuId) {
+//
+//        return skuSaleAttrValueMapper.selectSkuSaleAttrValueListBySpu(spuId);
+//
+//    }
 }

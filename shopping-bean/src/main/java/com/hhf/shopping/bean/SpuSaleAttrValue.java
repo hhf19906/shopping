@@ -7,6 +7,7 @@ import javax.persistence.Id;
 import javax.persistence.Transient;
 import java.io.Serializable;
 
+//平台属性值
 @Data
 public class SpuSaleAttrValue implements Serializable {
 
