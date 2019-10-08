@@ -1,11 +1,15 @@
 package com.hhf.shopping.manage.service.impl;
 
 import com.alibaba.dubbo.config.annotation.Service;
+import com.alibaba.fastjson.JSON;
 import com.hhf.shopping.bean.*;
+import com.hhf.shopping.config.RedisUtil;
+import com.hhf.shopping.manage.constant.ManageConst;
 import com.hhf.shopping.manage.mapper.*;
 import com.hhf.shopping.service.ManageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+import redis.clients.jedis.Jedis;
 
 
 import java.util.List;
@@ -54,6 +58,9 @@ public class ManageSericeImpl implements ManageService {
 
     @Autowired
     SkuAttrValueMapper skuAttrValueMapper;
+
+    @Autowired
+    private RedisUtil redisUtil;
 
     @Override
     public List<BaseCatalog1> getCatalog1() {
@@ -205,11 +212,56 @@ public class ManageSericeImpl implements ManageService {
                 skuSaleAttrValueMapper.insertSelective(skuSaleAttrValue);
             }
         }
-
     }
 
+    //判断缓存中是否有数据，如果有就从缓存中获取，如果没有就从mysql中获取，并将该数据放入redis缓存中
     @Override
     public SkuInfo getSkuInfo(String skuId) {
+         SkuInfo skuInfo = null;
+         Jedis jedis = null;
+
+         try {
+             jedis = redisUtil.getJedis();
+             //获取缓存的数据
+             String skuKey = ManageConst.SKUKEY_PREFIX + skuId + ManageConst.SKUKEY_SUFFIX;
+             String skuJson = jedis.get(skuKey);
+             if (skuJson == null || skuJson.length() == 0){ //如果redis中没有数据
+                 //若没有数据，那在高并发下若直接去查数据库，会很可能使数据库出现问题，只能采用分布式锁来解决该问题
+                 System.out.println("缓存中没有数据");
+                 //增加分布式锁
+                String skuLockKey =ManageConst.SKUKEY_PREFIX+skuId+ManageConst.SKULOCK_SUFFIX;
+                 String LockKey = jedis.set(skuLockKey, "nice", "NX", "PX", ManageConst.SKULOCK_EXPIRE_PX);
+                 if ("OK".equals(LockKey)){ //加锁成功
+                     // 从数据库中取得数据
+                     skuInfo = getSkuInfoDB(skuId);
+                     // 将是数据放入缓存
+                     // 将对象转换成字符串
+                     String skuRedisStr = JSON.toJSONString(skuInfo);
+                     jedis.setex(skuKey,ManageConst.SKUKEY_TIMEOUT,skuRedisStr);
+                     //删除锁
+                     jedis.del(skuLockKey);
+                     return skuInfo;
+                 }else {
+                     Thread.sleep(1000);
+                     return getSkuInfo(skuId);
+                 }
+             }else {
+                 //若拿到了数据，取出数据
+                 skuInfo = JSON.parseObject(skuJson, SkuInfo.class);
+                 return skuInfo;
+             }
+         }catch (Exception e){
+             e.printStackTrace();
+         }finally {
+             if (jedis!=null){
+                 jedis.close();
+             }
+         }
+        //若redis出现问题，系统将直接从mysql中获取数据
+        return getSkuInfoDB(skuId);
+    }
+
+    private SkuInfo getSkuInfoDB(String skuId) {
         SkuInfo skuInfo = skuInfoMapper.selectByPrimaryKey(skuId);
         SkuImage skuImage = new SkuImage();
         skuImage.setSkuId(skuId);
@@ -219,7 +271,7 @@ public class ManageSericeImpl implements ManageService {
         return skuInfo;
     }
 
-    //V
+
     @Override
     public List<SkuImage> getSkuImageBySkuId(String skuId) {
         SkuImage skuImage = new SkuImage();
@@ -241,10 +293,5 @@ public class ManageSericeImpl implements ManageService {
 
     }
 
-//    @Override
-//    public List<SkuSaleAttrValue> getSkuSaleAttrValueListBySpu(String spuId) {
-//
-//        return skuSaleAttrValueMapper.selectSkuSaleAttrValueListBySpu(spuId);
-//
-//    }
+
 }
