@@ -1,4 +1,4 @@
-package com.hhf.shopping.item;
+package com.hhf.shopping.passport;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -6,10 +6,10 @@ import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
 @ComponentScan("com.hhf.shopping")
-public class ShoppingItemWebApplication {
+public class ShoppingPassportWebApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ShoppingItemWebApplication.class, args);
+		SpringApplication.run(ShoppingPassportWebApplication.class, args);
 	}
 
 }
