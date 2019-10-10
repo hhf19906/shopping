@@ -1,14 +1,13 @@
-package com.hhf.shopping.manage;
+package com.hhf.shopping.list;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ShoppingManageWebApplication {
-
+public class ShoppingListWebApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ShoppingManageWebApplication.class, args);
+		SpringApplication.run(ShoppingListWebApplication.class, args);
 	}
 
 }
