@@ -22,7 +22,6 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
     // 在用户进入控制器之前
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        //https://www.jd.com/?newToken=eyJhbGciOiJIUzI1NiJ9.eyJuaWNrTmFtZSI6ImxhbnhpbmciLCJ1c2VySWQiOiIxIn0.oid_4Oke-_E7pEjeFdnqj9DjQYobf4FQmf5_mvldhtM
         String token = request.getParameter("newToken");
 
         if (token!=null){ // 当token 不为null的时候放cookie
@@ -44,14 +43,13 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
 
         // 在拦截器中获取方法上的注解
         HandlerMethod handlerMethod = (HandlerMethod) handler;
-        // 获取方法上的注解LoginRequire
         LoginRequire methodAnnotation = handlerMethod.getMethodAnnotation(LoginRequire.class);
         if (methodAnnotation!=null){
             // 判断用户是否登录了 调用verify
             // 获取服务器上的ip 地址
             String salt = request.getHeader("X-forwarded-for");
             //String salt = request.getHeader("localhost");
-            // 调用verify（）认证
+            // 调用verify（）进行认证
             String result = HttpClientUtil.doGet(WebConst.VERIFY_ADDRESS + "?token=" + token + "&salt=" + salt);
             if ("success".equals(result)){
                 // 登录，认证成功！
@@ -64,7 +62,7 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
                 request.setAttribute("userId",userId);
                 return true;
             }else {
-                // 认证失败！并且 methodAnnotation.autoRedirect()=true; 必须登录
+                // 认证失败！并且必须登录
                 if (methodAnnotation.autoRedirect()){
                     // 必须登录！跳转到页面！
                     // 先获取到url

@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>shopping-parent</artifactId>
+		<groupId>com.hhf.shopping</groupId>
+		<version>1.0-SNAPSHOT</version>
+		<relativePath>../shopping-parent/pom.xml</relativePath>
+	</parent>
+	<groupId>com.hhf.shopping</groupId>
+	<artifactId>shopping-cart-web</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>shopping-cart-web</name>
+	<description>Demo project for Spring Boot</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.hhf.shopping</groupId>
+			<artifactId>shopping-web-util</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.hhf.shopping</groupId>
+			<artifactId>shopping-interface</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<!--<build>-->
+	<!--<finalName>app</finalName>-->
+	<!--<plugins>-->
+		<!--<plugin>-->
+			<!--<groupId>org.springframework.boot</groupId>-->
+			<!--<artifactId>spring‐boot‐maven‐plugin</artifactId>-->
+		<!--</plugin>-->
+
+		<!--<plugin>-->
+			<!--<groupId>com.spotify</groupId>-->
+			<!--<artifactId>docker-maven-plugin</artifactId>-->
+			<!--<version>1.0.0</version>-->
+			<!--<configuration>-->
+				<!--<imageName>139.159.212.114:5000/${project.artifactId}:${project.version}-->
+				<!--</imageName>-->
+				<!--<baseImage>jdk1.8</baseImage>-->
+				<!--<entryPoint>["java", "‐jar","/${project.build.finalName}.jar"]</entryPoint>-->
+				<!--<resources>-->
+					<!--<resource>-->
+						<!--<targetPath>/</targetPath>-->
+						<!--<directory>${project.build.directory}-->
+						<!--</directory>-->
+						<!--<include>${project.build.finalName}.jar</include>-->
+					<!--</resource>-->
+				<!--</resources>-->
+				<!--<dockerHost>http://139.159.212.114:2375</dockerHost>-->
+			<!--</configuration>-->
+		<!--</plugin>-->
+	<!--</plugins>-->
+<!--</build>-->
+
+
+</project>
