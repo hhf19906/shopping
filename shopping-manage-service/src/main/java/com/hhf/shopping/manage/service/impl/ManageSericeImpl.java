@@ -227,15 +227,13 @@ public class ManageSericeImpl implements ManageService {
              String skuJson = jedis.get(skuKey);
              if (skuJson == null || skuJson.length() == 0){ //如果redis中没有数据
                  //若没有数据，那在高并发下若直接去查数据库，会很可能使数据库出现问题，只能采用分布式锁来解决该问题
-                 System.out.println("缓存中没有数据");
                  //增加分布式锁
                 String skuLockKey =ManageConst.SKUKEY_PREFIX+skuId+ManageConst.SKULOCK_SUFFIX;
                  String LockKey = jedis.set(skuLockKey, "nice", "NX", "PX", ManageConst.SKULOCK_EXPIRE_PX);
                  if ("OK".equals(LockKey)){ //加锁成功
                      // 从数据库中取得数据
                      skuInfo = getSkuInfoDB(skuId);
-                     // 将是数据放入缓存
-                     // 将对象转换成字符串
+                     // 将是数据放入缓存并将对象转换成字符串
                      String skuRedisStr = JSON.toJSONString(skuInfo);
                      jedis.setex(skuKey,ManageConst.SKUKEY_TIMEOUT,skuRedisStr);
                      //删除锁
@@ -267,7 +265,10 @@ public class ManageSericeImpl implements ManageService {
         skuImage.setSkuId(skuId);
         List<SkuImage> select = skuImageMapper.select(skuImage);
         skuInfo.setSkuImageList(select);
-
+        //查询平台属性值
+        SkuAttrValue skuAttrValue = new SkuAttrValue();
+        skuAttrValue.setSkuId(skuId);
+        skuInfo.setSkuAttrValueList(skuAttrValueMapper.select(skuAttrValue));
         return skuInfo;
     }
 

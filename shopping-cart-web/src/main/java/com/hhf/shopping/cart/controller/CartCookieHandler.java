@@ -55,11 +55,11 @@ public class CartCookieHandler {
             cartInfo.setSkuNum(skuNum);
             cartInfoList.add(cartInfo);
         }
+
         // 把购物车写入cookie
         String newCartJson = JSON.toJSONString(cartInfoList);
         CookieUtil.setCookie(request,response,cookieCartName,newCartJson,COOKIE_CART_MAXAGE,true);
 
-//        CookieUtil.getCookieValue();
     }
 
     public List<CartInfo> getCartList(HttpServletRequest request) {
@@ -69,5 +69,26 @@ public class CartCookieHandler {
             return cartInfoList;
         }
         return null;
+    }
+
+    //删除购物车
+    public void deleteCartCookie(HttpServletRequest request, HttpServletResponse response) {
+        CookieUtil.deleteCookie(request,response,cookieCartName);
+    }
+
+    //没有登录的时候，在购物车勾选的商品
+    public void checkCart(HttpServletRequest request, HttpServletResponse response, String skuId, String isChecked) {
+        // 直接将isChecked的值赋给购物车
+        List<CartInfo> cartList = getCartList(request);
+        if (cartList!=null && cartList.size()>0){
+            for (CartInfo cartInfo : cartList) {
+                if (cartInfo.getSkuId().equals(skuId)){
+                    cartInfo.setIsChecked(isChecked);
+                }
+            }
+        }
+
+        // 将购物车写回cookie
+        CookieUtil.setCookie(request,response,cookieCartName,JSON.toJSONString(cartList),COOKIE_CART_MAXAGE,true);
     }
 }

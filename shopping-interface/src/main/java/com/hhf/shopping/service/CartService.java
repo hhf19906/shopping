@@ -16,4 +16,13 @@ public interface CartService {
 
     //合并购物车
     List<CartInfo> mergeToCartList(List<CartInfo> cartListCK, String userId);
+
+    //修改登录后的购物车商品状态
+    void checkCart(String skuId, String isChecked, String userId);
+
+    //查询购物车列表数据
+    List<CartInfo> getCartCheckedList(String userId);
+
+    //查询实时的价格
+    List<CartInfo> loadCartCache(String userId);
 }

@@ -34,8 +34,8 @@ public class PassportController {
     @ResponseBody
     public String login(UserInfo userInfo, javax.servlet.http.HttpServletRequest  request){
 
-        //String salt = "localhost";
-      String salt = request.getHeader("X-forwarded-for");
+        String salt = "localhost";
+//      String salt = request.getHeader("X-forwarded-for");
         UserInfo info = userService.login(userInfo);
       if (info !=null){ //登录成功,返回相应的token
           //生成相应的token
@@ -54,9 +54,9 @@ public class PassportController {
     @ResponseBody
     public String verify(HttpServletRequest  request){
         //String salt = request.getHeader("X-forwarded-for");
-//        String salt = "localhost";
+        String salt = "localhost";
         String token = request.getParameter("token");
-        String salt = request.getParameter("salt");
+//        String salt = request.getParameter("salt");
         Map<String, Object> map = JwtUtil.decode(token, key, salt);
         if (map!=null&&map.size()>0){
             String userId = (String) map.get("userId");

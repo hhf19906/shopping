@@ -128,20 +128,79 @@ public class CartServiceImpl implements CartService {
         }
         // 最终将合并之后的数据返回！
         List<CartInfo> cartInfoList = loadCartCache(userId);
+
+        //勾选下订单的并和未登录的合并
+        for (CartInfo cartInfoDB : cartInfoList) {
+            for (CartInfo cartInfoCK : cartListCK) {
+                if (cartInfoDB.getSkuId().equals(cartInfoCK.getSkuId())){
+                    if ("1".equals(cartInfoCK.getIsChecked())){
+                        //修改数据库的状态
+                        cartInfoDB.setIsChecked(cartInfoCK.getIsChecked());
+                        checkCart(cartInfoDB.getSkuId(),"1",userId);
+                    }
+                }
+            }
+        }
+        
         return cartInfoList;
     }
 
+    @Override
+    public void checkCart(String skuId, String isChecked, String userId) {
+        Jedis jedis = redisUtil.getJedis();
+        String cartKey = CartConst.USER_KEY_PREFIX+userId+CartConst.USER_CART_KEY_SUFFIX;
+        String cartInfoJson = jedis.hget(cartKey, skuId);
+        CartInfo cartInfo = JSON.parseObject(cartInfoJson, CartInfo.class);
+        //从页面中获取商品状态
+        cartInfo.setIsChecked(isChecked);
+        //放入购物车
+        jedis.hset(cartKey,skuId, JSON.toJSONString(cartInfo));
 
-    private List<CartInfo> loadCartCache(String userId) {
+        String cartKeyChecked = CartConst.USER_KEY_PREFIX + userId + CartConst.USER_CHECKED_KEY_SUFFIX;
+        if ("1".equals(isChecked)){ //勾选商品
+            jedis.hset(cartKeyChecked,skuId,JSON.toJSONString(cartInfo));
+        }else {  //没有勾选商品
+            jedis.hdel(cartKeyChecked,skuId);
+        }
+        jedis.close();
+
+
+    }
+
+
+    @Override
+    public List<CartInfo> getCartCheckedList(String userId) {
+
+        List<CartInfo> cartInfoList = new ArrayList<>();
+
+
+        Jedis jedis = redisUtil.getJedis();
+        // 被选中的购物车
+        String cartKeyChecked = CartConst.USER_KEY_PREFIX+userId+CartConst.USER_CHECKED_KEY_SUFFIX;
+
+        List<String> stringList = jedis.hvals(cartKeyChecked);
+        // 循环判断
+        if (stringList!=null && stringList.size()>0){
+            for (String cartJson : stringList) {
+                cartInfoList.add(JSON.parseObject(cartJson,CartInfo.class));
+            }
+
+        }
+
+        jedis.close();
+        return cartInfoList;
+
+    }
+
+
+    public List<CartInfo> loadCartCache(String userId) {
         List<CartInfo> cartInfoList = cartInfoMapper.selectCartListWithCurPrice(userId);
         if (cartInfoList==null || cartInfoList.size()==0){
             return null;
         }
         Jedis jedis = redisUtil.getJedis();
         String cartKey = CartConst.USER_KEY_PREFIX+userId+CartConst.USER_CART_KEY_SUFFIX;
-//        for (CartInfo cartInfo : cartInfoList) {
-//            jedis.hset(cartKey,cartInfo.getSkuId(),JSON.toJSONString(cartInfo));
-//        }
+
         HashMap<String,String> map =new HashMap<>();
         for (CartInfo cartInfo : cartInfoList) {
             map.put(cartInfo.getSkuId(),JSON.toJSONString(cartInfo));

@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
+@ComponentScan("com.hhf.shopping")
 public class ShoppingOrderWebApplication {
 
 	public static void main(String[] args) {
